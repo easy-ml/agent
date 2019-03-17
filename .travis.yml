@@ -13,10 +13,6 @@ jobs:
       name: "Style"
       script:
         - find agent -name \*.py -exec flake8 {} +
-    - stage: "Tests"
-      name: "Tests"
-      script:
-        - pytest -v --cov=agent
     - stage: "Build"
       name: "Docker"
       script:
