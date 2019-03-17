@@ -2,7 +2,6 @@ import logging
 import sys
 
 import click
-
 from core import Core
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(name)s:\n%(message)s\n')

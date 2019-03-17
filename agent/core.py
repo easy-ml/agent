@@ -55,7 +55,7 @@ class Core(object):
     def _process_callback(self, ch, method, properties, body):
         try:
             self._prepare_callback(ch, method, properties, body)
-        except:
+        except Exception:
             logger.exception('Unexpected behavior:\n %r', body)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
