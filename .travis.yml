@@ -1,0 +1,20 @@
+language: python
+sudo: false
+python:
+  - "3.6"
+services:
+  - docker
+install:
+  - pip install -r requirements.dev.txt
+  - pip install -r requirements.txt
+  - pip install .
+jobs:
+  include:
+    - stage: "Style"
+      name: "Style"
+      script:
+        - find agent -name \*.py -exec flake8 {} +
+    - stage: "Build"
+      name: "Docker"
+      script:
+        - docker build -t test .
