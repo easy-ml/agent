@@ -9,6 +9,7 @@ import click
 import requests
 
 from agent.core import Core
+from agent.service import CoreService
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(name)s:\n%(message)s\n')
 logger = logging.getLogger(__name__)
@@ -31,22 +32,30 @@ def prepare_app(app):
     logger.info('Application prepared')
 
 
-def callback(body):
-    logger.info(f'[x] Received %r' % body)
-    # su -c "bash run.sh {folder}" - appuser
-    return None
+def callback(core: CoreService):
+    def cb(body):
+        logger.info(f'[x] Received %r' % body)
+        # core.get(body['image'])
+        # su -c "bash run.sh {folder}" - appuser
+        return None
+
+    return cb
 
 
 @click.command()
 @click.option('-m', '--amqp', envvar='AGENT_AMQP', required=True)
 @click.option('-q', '--queue', envvar='AGENT_QUEUE', required=True)
 @click.option('-a', '--app', envvar='AGENT_APP', required=True)
-def run(amqp, queue, app):
+@click.option('-t', '--token', envvar='AGENT_TOKEN', required=True)
+@click.option('-s', '--server', envvar='SERVER', required=True)
+def run(amqp, queue, app, token, server):
     """
     Run agent with following parameters
     :param amqp: Advanced Message Queuing Protocol URI
     :param queue: RabbitMQ Queue
     :param app: Application URL
+    :param token: Access token
+    :param server: Server URL
     """
     logger.info(f'''Loading agent with following parameters:
     AMQP: {amqp}
@@ -54,7 +63,9 @@ def run(amqp, queue, app):
     APP: {app}''')
 
     prepare_app(app)
-    core = Core(amqp, queue, callback)
+    core_service = CoreService(server, token)
+
+    core = Core(amqp, queue, callback(core_service))
     core.start()
     return 0
 
