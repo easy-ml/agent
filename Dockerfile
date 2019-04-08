@@ -14,4 +14,9 @@ ENV LANG C.UTF-8
 RUN pip3 install -r requirements.txt
 RUN pip3 install .
 
+RUN chmod 750 /code
+RUN groupadd -g 999 appuser && useradd -m -r -u 999 -g appuser appuser
+RUN cp /code/scripts/run.sh /home/appuser/
+RUN chmod +x /home/appuser/run.sh
+
 CMD run-agent
