@@ -24,7 +24,7 @@ class Core(object):
         self._output_channel.queue_declare(queue=self._output_queue, durable=True)
         logger.info('Declared output queue')
 
-        self._input_channel.basic_consume(self._process_callback, queue=self._input_queue)
+        self._input_channel.basic_consume(queue=self._input_queue, on_message_callback=self._process_callback)
 
         self._publish_properties = pika.BasicProperties(delivery_mode=2)
 
@@ -45,7 +45,7 @@ class Core(object):
         response = {'request_id': request_id, 'request': data}
 
         try:
-            response['response'] = self._handler(payload)
+            response['response'] = self._handler(request_id, payload)
         except Exception as e:
             logger.exception('Payload:\n %r', payload)
             response['error'] = str(e)
