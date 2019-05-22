@@ -31,3 +31,7 @@ class CoreService(object):
                 extra['request_id'] = request_id
             response = requests.post(upload_url, data=extra, files=files, headers=self._headers)
         return response
+
+    def update_request(self, request_id, response):
+        url = f'{self._url}/submissions'
+        requests.patch(url, params={'request_id': request_id}, json={'response': response}, headers=self._headers)
