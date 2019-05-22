@@ -123,7 +123,7 @@ def run(amqp, queue, app, token, server):
     prepare_app(app)
     core_service = CoreService(server, token)
 
-    core = Core(amqp, queue, callback(core_service))
+    core = Core(amqp, queue, callback(core_service), core_service)
     core.start()
     return 0
 
